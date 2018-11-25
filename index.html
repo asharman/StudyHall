@@ -22,51 +22,44 @@
 </head>
 
 <body>
-
-        <nav>
+    
+        <nav class="nav-extended">
                 <div class="nav-wrapper">
-                  <a href="#" class="brand-logo">Logo</a>
-                  <ul id="nav-mobile" class="right hide-on-med-and-down">
-                    <li><a href="sass.html">Sass</a></li>
+                    <div class="center-align">
+                  <a href="#" class="brand-logo">Study Hall</a>
+                </div>
+                  <a class="waves-effect waves-light btn-small left">Search Places</a>
+                </div>
+            </nav>
+            
+            <!-- <ul class="sidenav hide-on-large-and-up" id="mobile-demo">
+                put in a search function to add place -->
+                    <!-- <li><a href="sass.html">Search</a></li>
                     <li><a href="badges.html">Components</a></li>
                     <li><a href="collapsible.html">JavaScript</a></li>
-                  </ul>
-                </div>
-              </nav>
-
-
-              <ul id="slide-out" class="sidenav">
-                    <li><div class="user-view">
-                      <div class="background">
-                        <img src="images/office.jpg">
-                      </div>
-                      <a href="#user"><img class="circle" src="images/yuna.jpg"></a>
-                      <a href="#name"><span class="white-text name">John Doe</span></a>
-                      <a href="#email"><span class="white-text email">jdandturk@gmail.com</span></a>
-                    </div></li>
-                    <li><a href="#!"><i class="material-icons">cloud</i>First Link With Icon</a></li>
-                    <li><a href="#!">Second Link</a></li>
-                    <li><div class="divider"></div></li>
-                    <li><a class="subheader">Subheader</a></li>
-                    <li><a class="waves-effect" href="#!">Third Link With Waves</a></li>
-                  </ul>
-                  <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-
+                  </ul>    --> 
+             
     <div class="row">
         <div class="col s12 m6 l4">
-            <div class="card card-limited">
+            <div class="card card-limited hoverable">
                 <div class="card-image">
                     <img src="http://wptest.io/demo/wp-content/uploads/sites/2/2012/12/unicorn-wallpaper.jpg">
-                </div>
-                <div class="card-content">
                     <span class="card-title">Place Name</span>
-                    <p>Address:</p>
-                    <a class="btn-floating btn-small waves-effect waves-light red"><i class="material-icons">&#10003</i></a>
+                </div>
+                <div class="card-content paragraph">
+                    <div class="row">
+                        <div class="col s9">
+                    <p class="col s9">Address:</p>
+                </div>
+                <div class="col s3">
+                    <a class="btn-small waves-effect waves-light red right bottom hoverable"><i class="material-icons">&#10003</i></a>
+                </div>
                 </div>
             </div>
-
+            </div>
+            </div>
         </div>
-    </div>
+    
 
 
     <div class="row">
@@ -74,17 +67,18 @@
             <div class="card card-limited">
                 <div class="card-image">
                     <img src="http://wptest.io/demo/wp-content/uploads/sites/2/2012/12/unicorn-wallpaper.jpg">
+                    <span class="card-title col 8">Place Name</span>
                 </div>
 
 
                 <div class="card-content">
                     <div class="row">
-                        <span class="card-title col 8">Place Name</span>
-                        <span class="col 4">Here Now: </span>
+                            <div class="col s8">
+                                    <p>Address:</p>
+                                </div>
+                        <span class="col s4">Here Now: </span>
                     </div>
-                    <div class="row">
-                        <p>Address:</p>
-                    </div>
+                    <!-- Insert edit button somewhere here with an empty div for text input -->
                 </div>
             </div>
         </div>
