@@ -8,26 +8,34 @@ $.ajax({
     url: queryURL,
     datatype: "json",
     method: "GET",
-}).then(function(response){
+}).then(function (response) {
     console.log(response);
-    let venueID = response.response.venues[1].id;
-    $.ajax({
-        url: `https://api.foursquare.com/v2/venues/${venueID}/photos?client_id=MRGWSL0B0JOCS24FEY2DXNMTQSPVX32A2QQ2WGLGXKPJ4OBM&client_secret=A5TGKNJQUCFJFLVHRC1R1BXIHN35GZYKLFPZVV5W11PTHA5T&v=20180323`
-    }).then(function(photo){
-        console.log(photo);
-        let newImg = $("<img>");
-        let imgRef = photo.response.photos.items[0];
-        newImg.attr("src", imgRef.prefix + "original" + imgRef.suffix);
-        $("#test").append(newImg);
-    })
-    $.ajax({
-        url: `https://api.foursquare.com/v2/venues/${venueID}?client_id=MRGWSL0B0JOCS24FEY2DXNMTQSPVX32A2QQ2WGLGXKPJ4OBM&client_secret=A5TGKNJQUCFJFLVHRC1R1BXIHN35GZYKLFPZVV5W11PTHA5T&v=20180323`,
-        method: "GET"
-    }).then(function(details){
-        console.log(details);
-        let name = details.response.venue.name;
-        let address = details.response.venue.location.formattedAddress;
+    for (i in response.response.venues) {
+        let venueID = response.response.venues[i].id;
+        let name = response.response.venues[i].name;
+        let address = response.response.venues[i].location.formattedAddress;
+        console.log(name);
+        console.log(address[0]);
 
-        
-    })
+        if (address.length === 3) {
+
+        $("#card-container").append(`
+        <div class="card card-limited hoverable">
+            <div class="card-image">
+                <img src="http://wptest.io/demo/wp-content/uploads/sites/2/2012/12/unicorn-wallpaper.jpg">
+                <span id="place" class="card-title">${name}</span>
+            </div>
+            <div class="card-content paragraph">
+                <div class="row">
+                    <div class="col s9">
+                        <p id="address" class="col s9">${address[0]}</p>
+                    </div>
+                    <div class="col s3">
+                        <a class="btn-small waves-effect waves-light red right bottom hoverable"><i class="material-icons">&#10003</i></a>
+                    </div>
+                </div>
+            </div>
+        </div>`)
+        }
+    }
 });
