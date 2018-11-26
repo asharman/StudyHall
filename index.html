@@ -19,11 +19,13 @@
     <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.4.1/firebaseui.css" />
     <!-- Materialize JS -->
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script defer src="assets/javascript/foursquareplaces.js"></script>
     <!-- Local JS -->
     <script defer src="assets/javascript/logic.js"></script>
 </head>
 
 <body>
+
         <div id="firebaseui-auth-container"></div>
         <header>
         <nav class="nav-extended">
@@ -52,9 +54,10 @@
                   </ul>
                   <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
                 </header>
+
     <div class="row">
-        <div class="col s12 m6 l4">
-            <div class="card card-limited hoverable">
+        <div id="card-container" class="col s12 m6 l4">
+            <!-- <div class="card card-limited hoverable">
                 <div class="card-image">
                     <img src="http://wptest.io/demo/wp-content/uploads/sites/2/2012/12/unicorn-wallpaper.jpg">
                     <span id="place" class="card-title">Place Name</span>
@@ -62,20 +65,22 @@
                 <div class="card-content paragraph">
                     <div class="row">
                         <div class="col s9">
-                    <p id="address" class="col s9">Address:</p>
+
+                            <p id="address" class="col s9">Address:</p>
+                        </div>
+                        <div class="col s3">
+                            <a class="btn-small waves-effect waves-light red right bottom hoverable"><i class="material-icons">&#10003</i></a>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="col s3">
-                    <a class="btn-small waves-effect waves-light red right bottom hoverable"><i class="material-icons">add</i></a>
-                </div>
-                </div>
-            </div>
-            </div>
-            </div>
+            </div> -->
         </div>
-    
+    </div>
 
 
-    <div class="row">
+
+    <!-- <div class="row">
         <div class="col s12 m6 l4">
             <div class="card card-limited">
                 <div class="card-image">
@@ -86,16 +91,16 @@
 
                 <div class="card-content">
                     <div class="row">
-                            <div class="col s8">
-                                    <p>Address:</p>
-                                </div>
+                        <div class="col s8">
+                            <p>Address:</p>
+                        </div>
                         <span class="col s4">Here Now: </span>
                     </div>
-                    <!-- Insert edit button somewhere here with an empty div for text input -->
+                    Insert edit button somewhere here with an empty div for text input
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 </body>
 
 </html>
