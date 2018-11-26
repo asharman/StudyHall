@@ -1,4 +1,12 @@
 .btn-floating {
-    margin-left: 230px;
+    margin-left: auto;
     margin-top: 20px;
+}
+
+.card {
+    clear: both;
+}
+
+.card-content {
+    padding-bottom: 5px !important;
 }
