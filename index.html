@@ -15,17 +15,82 @@
         crossorigin="anonymous"></script>
     <!-- Firebase JS -->
     <script defer src="https://www.gstatic.com/firebasejs/5.5.9/firebase.js"></script>
+    <script src="https://cdn.firebase.com/libs/firebaseui/3.4.1/firebaseui.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.4.1/firebaseui.css" />
     <!-- Materialize JS -->
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script defer src="https://apis.google.com/js/api.js" type="text/javascript"></script>
-    <script defer src="assets/javascript/googlePlacesAPI.js"></script>
+    <script defer src="assets/javascript/foursquareplaces.js"></script>
     <!-- Local JS -->
     <script defer src="assets/javascript/logic.js"></script>
 </head>
 
 <body>
-    <div id="test">
-        
+    
+        <nav class="nav-extended">
+                <div class="nav-wrapper">
+                    <div class="center-align">
+                  <a href="#" class="brand-logo">Study Hall</a>
+                </div>
+                      <form>
+                        <div class="input-field">
+                          <input id="search" type="search" required>
+                          <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+                          <i class="material-icons">close</i>
+                        </div>
+                      </form>
+                    </div>
+            </nav>
+            
+            <!-- <ul class="sidenav hide-on-large-and-up" id="mobile-demo">
+                put in a search function to add place -->
+                    <!-- <li><a href="sass.html">Search</a></li>
+                    <li><a href="badges.html">Components</a></li>
+                    <li><a href="collapsible.html">JavaScript</a></li>
+                  </ul>    --> 
+             
+    <div class="row">
+        <div class="col s12 m6 l4">
+            <div class="card card-limited hoverable">
+                <div class="card-image">
+                    <img src="http://wptest.io/demo/wp-content/uploads/sites/2/2012/12/unicorn-wallpaper.jpg">
+                    <span id="place" class="card-title">Place Name</span>
+                </div>
+                <div class="card-content paragraph">
+                    <div class="row">
+                        <div class="col s9">
+                    <p id="address" class="col s9">Address:</p>
+                </div>
+                <div class="col s3">
+                    <a class="btn-small waves-effect waves-light red right bottom hoverable"><i class="material-icons">&#10003</i></a>
+                </div>
+                </div>
+            </div>
+            </div>
+            </div>
+        </div>
+    
+
+
+    <div class="row">
+        <div class="col s12 m6 l4">
+            <div class="card card-limited">
+                <div class="card-image">
+                    <img src="http://wptest.io/demo/wp-content/uploads/sites/2/2012/12/unicorn-wallpaper.jpg">
+                    <span class="card-title col 8">Place Name</span>
+                </div>
+
+
+                <div class="card-content">
+                    <div class="row">
+                            <div class="col s8">
+                                    <p>Address:</p>
+                                </div>
+                        <span class="col s4">Here Now: </span>
+                    </div>
+                    <!-- Insert edit button somewhere here with an empty div for text input -->
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 
