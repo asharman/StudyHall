@@ -15,6 +15,10 @@ var config = {
 
   database = firebase.database();
 
+  var storage = firebase.storage();
+  var storageRef = storage.ref();
+  
+
   // $(".card").on("click", function() {
 
   // })
