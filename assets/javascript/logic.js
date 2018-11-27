@@ -1,6 +1,8 @@
 $(document).ready(function () {
   $('.modal').modal();
 
+    $('.sidenav').sidenav();
+
 
   // Initialize Firebase
   let config = {
