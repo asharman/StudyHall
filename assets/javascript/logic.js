@@ -85,7 +85,6 @@ $(document).ready(function () {
       console.log(response);
       object = response;
       for (i in response.response.venues) {
-        let venueID = response.response.venues[i].id;
         let name = response.response.venues[i].name;
         let address = response.response.venues[i].location.formattedAddress;
         console.log(name);
@@ -123,8 +122,36 @@ $(document).ready(function () {
     database.ref().push({
       name: venue.name,
       address: venue.location.formattedAddress[0],
-      ID: venue.id,
     });
-  })
+  });
 
+  database.ref().on("child_added", function (childSnap) {
+    console.log(childSnap);
+    $("#card-container").append(`
+    <div class="card card-limited hoverable">
+    <div class="card-image modal-trigger" href="#modal">
+    <img src="http://wptest.io/demo/wp-content/uploads/sites/2/2012/12/unicorn-wallpaper.jpg">
+    <span id="place" class="card-title">${childSnap.val().name}</span>
+    </div>
+    <div class="card-content paragraph">
+    <div class="row">
+    <div class="col s9">
+    <p id="address">${childSnap.val().address}</p>
+    <p id="${childSnap.key}numCheckedIn">${childSnap.child('users').numChildren()} have checked in</p>
+    </div>
+    <div class="col s3">
+    <a data="${childSnap.key}" id="checkIn" class="btn-small waves-effect waves-light red right bottom hoverable"><i class="material-icons">&#10003</i></a>
+    </div>
+    </div>
+    </div>
+    </div>`);
+  });
+
+  $("#card-container").on("click", "#checkIn", function(){
+    let venueID = $(this).attr("data");
+    database.ref(`/${venueID}/users`).push(true);
+    database.ref(`/${venueID}`).on("value", function(childSnap){
+      $(`#${venueID}numCheckedIn`).text(`${childSnap.child('users').numChildren()} have checked in`)
+    })
+  })
 });
