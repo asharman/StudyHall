@@ -28,46 +28,52 @@ $(document).ready(function () {
     }
   };
 
-  // Initialize the FirebaseUI Widget using Firebase.
-  let ui = new firebaseui.auth.AuthUI(firebase.auth());
-  // The start method will wait until the DOM is loaded.
-  ui.start('#firebaseui-auth-container', uiConfig);
+  
 
   let database = firebase.database();
 
   let storage = firebase.storage();
   let storageRef = storage.ref();
 
-  let provider = new firebase.auth.GoogleAuthProvider();
+  const auth = firebase.auth();
+  // auth.signInWithEmailAndPassword(email, pass);
+  // auth.createUserWithEmailAndPassword(email, pass);
+  // auth.onAuthStateChanged(function() {});
 
-  firebase.auth().getRedirectResult().then(function (result) {
-    if (result.credential) {
-      // This gives you a Google Access Token. You can use it to access the Google API.
-      let token = result.credential.accessToken;
-      // ...
+  // $("#email").val()
+  // $("#password").val()
+
+  $("#log-in").on("click", function() {
+    auth.signInWithEmailAndPassword($("#email").val(), $("#password").val());
+    console.log("log-in success");
+    
+  })
+
+  $("#sign-up").on("click", function() {
+    auth.createUserWithEmailAndPassword($("#email").val(), $("#password").val());
+    console.log("New user success");
+    })
+
+  $("#sign-out").on("click", function() {
+    auth.signOut();
+    $("#sign-out").addClass("hide");
+    $("#log-in").removeClass("hide");
+      $("#sign-up").removeClass("hide");
+
+  })
+
+  auth.onAuthStateChanged(function(firebaseUser) {
+    if(firebaseUser) {
+      console.log(firebaseUser);
+      $("#sign-out").removeClass("hide");
+      $("#log-in").addClass("hide");
+      $("#sign-up").addClass("hide");
     }
-    // The signed-in user info.
-    let user = result.user;
-  }).catch(function (error) {
-    // Handle Errors here.
-    let errorCode = error.code;
-    let errorMessage = error.message;
-    // The email of the user's account used.
-    let email = error.email;
-    // The firebase.auth.AuthCredential type that was used.
-    let credential = error.credential;
-    // ...
-  });
-  // $(".card").on("click", function() {
-
-  // })
-
-  // Initialize collapsible (uncomment the lines below if you use the dropdown letiation)
-  // let collapsibleElem = document.querySelector('.collapsible');
-  // let collapsibleInstance = M.Collapsible.init(collapsibleElem, options);
-
-  // Or with jQuery
-
+    else {
+      console.log("not logged in");
+      
+    }
+  })
 
 
   let queryURL = `https://api.foursquare.com/v2/venues/search?client_id=MRGWSL0B0JOCS24FEY2DXNMTQSPVX32A2QQ2WGLGXKPJ4OBM&client_secret=A5TGKNJQUCFJFLVHRC1R1BXIHN35GZYKLFPZVV5W11PTHA5T&v=20180323&near=Orlando, FL&query=coffee`;
