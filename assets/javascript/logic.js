@@ -1,7 +1,7 @@
 $(document).ready(function () {
   $('.modal').modal();
 
-    $('.sidenav').sidenav();
+  $('.sidenav').sidenav();
 
 
   // Initialize Firebase
@@ -30,14 +30,13 @@ $(document).ready(function () {
     }
   };
 
-  
+
 
   let database = firebase.database();
 
-  let storage = firebase.storage();
-  let storageRef = storage.ref();
-
   const auth = firebase.auth();
+  let email, uid, username;
+  let currentLocation;
   // auth.signInWithEmailAndPassword(email, pass);
   // auth.createUserWithEmailAndPassword(email, pass);
   // auth.onAuthStateChanged(function() {});
@@ -45,35 +44,83 @@ $(document).ready(function () {
   // $("#email").val()
   // $("#password").val()
 
-  $("#log-in").on("click", function() {
+  $("#log-in").on("click", function () {
     auth.signInWithEmailAndPassword($("#email").val(), $("#password").val());
-    console.log("log-in success");
-    
+
   })
 
-  $("#sign-up").on("click", function() {
-    auth.createUserWithEmailAndPassword($("#email").val(), $("#password").val());
-    console.log("New user success");
-    })
+  $("#sign-up").on("click", function () {
 
-  $("#sign-out").on("click", function() {
+    const useremail = $("#email").val();
+    const userpassword = $("#password").val();
+
+    auth.createUserWithEmailAndPassword(useremail, userpassword).then(function (user) {
+      console.log(user);
+      email = user.user.email;
+      uid = user.user.uid;
+      username = user.user.displayName;
+      currentLocation = "none"
+
+      if (username === null) {
+        username = $("#username").val();
+        user.user.updateProfile({
+          displayName: username
+        });
+      }
+
+      let userRef = database.ref(`users/` + uid);
+
+      userRef.set({
+        email: email,
+        username: username,
+        currentLocation: currentLocation,
+      });
+    })
+  })
+
+  $("#sign-out").on("click", function () {
     auth.signOut();
     $("#sign-out").addClass("hide");
     $("#log-in").removeClass("hide");
-      $("#sign-up").removeClass("hide");
+    $("#sign-up").removeClass("hide");
 
   })
 
-  auth.onAuthStateChanged(function(firebaseUser) {
-    if(firebaseUser) {
-      console.log(firebaseUser);
+  auth.onAuthStateChanged(function (firebaseUser) {
+    let user = auth.currentUser;
+    if (user != null) {
+      console.log(user)
+
+
+      email = user.email;
+      uid = user.uid;
+      username = user.displayName;
+
+      let userRef = database.ref(`users/` + uid);
+
+      userRef.once("value", function (snap) {
+
+        if (snap.val().currentLocation != null) {
+          currentLocation = snap.val().currentLocation;
+          console.log(currentLocation);
+          userRef.set({
+            email: email,
+            username: username,
+            currentLocation: currentLocation,
+          });
+        }
+      });
+
+      console.log(username);
+      console.log(email);
+      console.log(uid);
       $("#sign-out").removeClass("hide");
       $("#log-in").addClass("hide");
       $("#sign-up").addClass("hide");
     }
     else {
       console.log("not logged in");
-      
+
     }
   })
 
@@ -90,7 +137,6 @@ $(document).ready(function () {
       datatype: "json",
       method: "GET",
     }).then(function (response) {
-      console.log(response);
       object = response;
       for (i in response.response.venues) {
         let name = response.response.venues[i].name;
@@ -102,7 +148,7 @@ $(document).ready(function () {
 
           $("#card-container").append(`
           <div class="card card-limited hoverable">
-          <div data="${i}" class="card-image modal-trigger" href="#modal">
+          <div data="${i}" class="card-image" href="#modal">
           <img src="http://wptest.io/demo/wp-content/uploads/sites/2/2012/12/unicorn-wallpaper.jpg">
           <span id="place" class="card-title">${name}</span>
           </div>
@@ -127,17 +173,16 @@ $(document).ready(function () {
     let venue = object.response.venues[venueIndex];
     console.log(venue);
 
-    database.ref().push({
+    database.ref('places/').push({
       name: venue.name,
       address: venue.location.formattedAddress[0],
     });
   });
 
-  database.ref().on("child_added", function (childSnap) {
-    console.log(childSnap);
+  database.ref('places/').on("child_added", function (childSnap) {
     $("#card-container").append(`
     <div class="card card-limited hoverable">
-    <div class="card-image modal-trigger" href="#modal">
+    <div data="${childSnap.key}" id="cardImage" class="card-image modal-trigger" href="#modal">
     <img src="http://wptest.io/demo/wp-content/uploads/sites/2/2012/12/unicorn-wallpaper.jpg">
     <span id="place" class="card-title">${childSnap.val().name}</span>
     </div>
@@ -155,11 +200,59 @@ $(document).ready(function () {
     </div>`);
   });
 
-  $("#card-container").on("click", "#checkIn", function(){
+  $("#card-container").on("click", "#checkIn", function () {
+    console.log(currentLocation);
     let venueID = $(this).attr("data");
-    database.ref(`/${venueID}/users`).push(true);
-    database.ref(`/${venueID}`).on("value", function(childSnap){
+    currentLocation = venueID;
+
+    checkIn(venueID);
+
+    database.ref(`places/${venueID}`).on("value", function (childSnap) {
       $(`#${venueID}numCheckedIn`).text(`${childSnap.child('users').numChildren()} have checked in`)
+    })
+  });
+
+  let checkIn = function (ID) {
+    database.ref(`users/${uid}`).once("value", function (snap) {
+
+      if (snap.val().currentLocation != "none") {
+        console.log(snap.val().currentLocation);
+        database.ref(`places/${snap.val().currentLocation}/users/${uid}`).remove()
+        console.log(`Delete Successful`);
+        database.ref(`places/${snap.val().currentLocation}`).on("value", function (childSnap) {
+          $(`#${snap.val().currentLocation}numCheckedIn`).text(`${childSnap.child('users').numChildren()} have checked in`)
+        })
+        database.ref(`places/${ID}/users/${uid}`).set(username);
+        database.ref(`users/${uid}`).set({
+          email: email,
+          username: username,
+          currentLocation: currentLocation,
+        });
+      }
+
+    })
+
+  }
+
+  $("#card-container").on("click", "#cardImage", function() {
+    $("#hereNow").empty();
+    let venueID = $(this).attr("data");
+    let name, address; 
+    database.ref(`places/${venueID}`).once("value", function(snapShot){
+      address = snapShot.val().address;
+      $("#placeAddress").text(address);
+
+      name = snapShot.val().name;
+      $("#placeName").text(name);
+
+      database.ref(`places/${venueID}/users`).once("value", function (childSnapshot){
+        childSnapshot.forEach(function(childSnap){
+          let newList = $("<li>");
+          newList.text(childSnap.val());
+          $("#hereNow").append(newList);
+
+        })
+      })
     })
   })
 });
