@@ -55,13 +55,13 @@ $(document).ready(function () {
     const userpassword = $("#password").val();
 
     auth.createUserWithEmailAndPassword(useremail, userpassword).then(function (user) {
-      console.log(user);
       email = user.user.email;
       uid = user.user.uid;
       username = user.user.displayName;
       currentLocation = "none"
 
-      if (username === null) {
+      if (username == null) {
+
         username = $("#username").val();
         user.user.updateProfile({
           displayName: username
@@ -69,7 +69,7 @@ $(document).ready(function () {
       }
 
       let userRef = database.ref(`users/` + uid);
-
+      
       userRef.set({
         email: email,
         username: username,
@@ -89,7 +89,6 @@ $(document).ready(function () {
   auth.onAuthStateChanged(function (firebaseUser) {
     let user = auth.currentUser;
     if (user != null) {
-      console.log(user)
 
 
       email = user.email;
@@ -102,7 +101,6 @@ $(document).ready(function () {
 
         if (snap.val().currentLocation != null) {
           currentLocation = snap.val().currentLocation;
-          console.log(currentLocation);
           userRef.set({
             email: email,
             username: username,
@@ -111,9 +109,6 @@ $(document).ready(function () {
         }
       });
 
-      console.log(username);
-      console.log(email);
-      console.log(uid);
       $("#sign-out").removeClass("hide");
       $("#log-in").addClass("hide");
       $("#sign-up").addClass("hide");
