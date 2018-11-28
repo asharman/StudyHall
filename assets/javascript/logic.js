@@ -124,14 +124,16 @@ $(document).ready(function () {
     }
   })
 
-
-  let queryURL = `https://api.foursquare.com/v2/venues/search?client_id=MRGWSL0B0JOCS24FEY2DXNMTQSPVX32A2QQ2WGLGXKPJ4OBM&client_secret=A5TGKNJQUCFJFLVHRC1R1BXIHN35GZYKLFPZVV5W11PTHA5T&v=20180323&near=Orlando, FL&query=coffee`;
-  let object;
-
   console.log(`Working`);
 
   $("#searchButton").on("click", function () {
     $("#card-container").empty();
+    let latitude, longitude;
+    navigator.geolocation.getCurrentPosition(function(position) {
+      latitude = position.coords.latitude;
+      longitude = position.coords.longitude;
+    
+    let queryURL = `https://api.foursquare.com/v2/venues/search?client_id=MRGWSL0B0JOCS24FEY2DXNMTQSPVX32A2QQ2WGLGXKPJ4OBM&client_secret=A5TGKNJQUCFJFLVHRC1R1BXIHN35GZYKLFPZVV5W11PTHA5T&v=20180323&ll=${latitude},${longitude}&query=coffee&limit=15`;
     $.ajax({
       url: queryURL,
       datatype: "json",
@@ -166,6 +168,7 @@ $(document).ready(function () {
         }
       }
     });
+  });
   });
 
   $("#card-container").on("click", "#addButton", function () {
@@ -255,4 +258,6 @@ $(document).ready(function () {
       })
     })
   })
+
+  
 });
