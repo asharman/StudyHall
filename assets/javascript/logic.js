@@ -215,7 +215,7 @@ $(document).ready(function () {
   let checkIn = function (ID) {
     database.ref(`users/${uid}`).once("value", function (snap) {
 
-      if (snap.val().currentLocation != "none") {
+      if (snap.val().currentLocation != null) {
         console.log(snap.val().currentLocation);
         database.ref(`places/${snap.val().currentLocation}/users/${uid}`).remove()
         console.log(`Delete Successful`);
