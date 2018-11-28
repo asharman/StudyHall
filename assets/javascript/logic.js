@@ -46,39 +46,40 @@ $(document).ready(function () {
     auth.signInWithEmailAndPassword($("#email").val(), $("#password").val());
 
   })
-
+  
   $("#sign-up").on("click", function () {
-
+    
     const useremail = $("#email").val();
     const userpassword = $("#password").val();
-
+    
     auth.createUserWithEmailAndPassword(useremail, userpassword)
   })
-
+  
   $("#sign-out").on("click", function () {
-    auth.signOut();
+    checkout();
     $("#sign-out").addClass("hide");
     $("#log-in").removeClass("hide");
     $("#sign-up").removeClass("hide");
-
+    auth.signOut();
+    
   })
-
+  
   auth.onAuthStateChanged(function (firebaseUser) {
     let user = auth.currentUser;
     if (user != null) {
-
+      
       currentUserO.email = user.email;
       currentUserO.uid = user.uid;
       let username = user.displayName;
-
+      
       if (username == null) {
-
+        
         username = $("#username").val();
         user.updateProfile({
           displayName: username
         }).then(function () {
           let userRef = database.ref(`users/` + currentUserO.uid);
-
+          
           userRef.set({
             email: currentUserO.email,
             username: username,
@@ -86,42 +87,45 @@ $(document).ready(function () {
           });
         });
       }
-
+      
       currentUserO.username = username;
       currentUserO.email = user.email;
       currentUserO.uid = user.uid;
-
+      
       let userRef = database.ref(`users/` + currentUserO.uid);
-        userRef.once("value", function (snap) {
-
-          if (snap.val().currentLocation != null) {
-            currentUserO.currentLocation = snap.val().currentLocation;
-            userRef.set({
-              email: currentUserO.email,
-              username: currentUserO.username,
-              currentLocation: currentUserO.currentLocation,
-            });
-          }
-        });
+      userRef.once("value", function (snap) {
+        
+        if (snap.val().currentLocation != null) {
+          
+          currentUserO.currentLocation = snap.val().currentLocation;
+          console.log(currentUserO.currentLocation);
+          
+          userRef.set({
+            email: currentUserO.email,
+            username: currentUserO.username,
+            currentLocation: currentUserO.currentLocation,
+          });
+        }
+      });
       $("#sign-out").removeClass("hide");
       $("#log-in").addClass("hide");
       $("#sign-up").addClass("hide");
     }
     else {
       console.log("not logged in");
-
+      
     }
   })
-
+  
   console.log(`Working`);
-
+  
   $("#searchButton").on("click", function () {
     $("#card-container").empty();
     let latitude, longitude;
     navigator.geolocation.getCurrentPosition(function (position) {
       latitude = position.coords.latitude;
       longitude = position.coords.longitude;
-
+      
       let queryURL = `https://api.foursquare.com/v2/venues/search?client_id=MRGWSL0B0JOCS24FEY2DXNMTQSPVX32A2QQ2WGLGXKPJ4OBM&client_secret=A5TGKNJQUCFJFLVHRC1R1BXIHN35GZYKLFPZVV5W11PTHA5T&v=20180323&ll=${latitude},${longitude}&query=coffee&limit=15`;
       $.ajax({
         url: queryURL,
@@ -159,88 +163,154 @@ $(document).ready(function () {
   });
 
   $("#card-container").on("click", "#addButton", function () {
-    let venueIndex = $(this).attr("data");
-    let venue = object.response.venues[venueIndex];
+    if (auth.currentUser != null){
 
-    database.ref('places/').push({
-      name: venue.name,
-      address: venue.location.formattedAddress[0],
+      let venueIndex = $(this).attr("data");
+      let venue = object.response.venues[venueIndex];
+      
+      database.ref('places/').push({
+        name: venue.name,
+        address: venue.location.formattedAddress[0],
+      });
+    }
     });
-  });
+    
+    let buffer = setTimeout(function () {
+      
+    database.ref('places/').on("child_added", function (childSnap) {
+      console.log(currentUserO.currentLocation);
+      console.log(childSnap.key);
 
-  database.ref('places/').on("child_added", function (childSnap) {
-    $("#card-container").append(`
-    <div class="card card-limited hoverable">
-    <div data="${childSnap.key}" id="cardImage" class="card-image modal-trigger" href="#modal">
-    <img src="http://wptest.io/demo/wp-content/uploads/sites/2/2012/12/unicorn-wallpaper.jpg">
-    <span id="place" class="card-title">${childSnap.val().name}</span>
-    </div>
-    <div class="card-content paragraph">
-    <div class="row">
-    <div class="col s9">
-    <p id="address">${childSnap.val().address}</p>
-    <p id="${childSnap.key}numCheckedIn">${childSnap.child('users').numChildren()} have checked in</p>
-    </div>
-    <div class="col s3">
-    <a data="${childSnap.key}" id="checkIn" class="btn-small waves-effect waves-light red right bottom hoverable"><i class="material-icons">&#10003</i></a>
-    </div>
-    </div>
-    </div>
-    </div>`);
-  });
+      if (currentUserO.currentLocation == childSnap.key) {
+        $("#card-container").append(`
+        <div class="card card-limited hoverable">
+        <div data="${childSnap.key}" id="cardImage" class="card-image modal-trigger" href="#modal">
+        <img src="http://wptest.io/demo/wp-content/uploads/sites/2/2012/12/unicorn-wallpaper.jpg">
+        <span id="place" class="card-title">${childSnap.val().name}</span>
+        </div>
+        <div class="card-content paragraph">
+        <div class="row">
+        <div class="col s9">
+        <p id="address">${childSnap.val().address}</p>
+        <p id="${childSnap.key}numCheckedIn">${childSnap.child('users').numChildren()} have checked in</p>
+        </div>
+        <div class="col s3">
+        <a data="${childSnap.key}" id="checkIn${childSnap.key}" class="btn-small waves-effect waves-light red right bottom hoverable checkIn hide"><i class="material-icons">&#10003</i></a>
+        <a data="${childSnap.key}" id="checkOut${childSnap.key}" class="btn-small waves-effect waves-light red right bottom hoverable checkOut"><i class="material-icons">OUT</i></a>
+        </div>
+        </div>
+        </div>
+        </div>`);
 
-  $("#card-container").on("click", "#checkIn", function () {
-    let venueID = $(this).attr("data");
-    currentUserO.currentLocation = venueID;
+      } else {
 
-    checkIn(venueID);
-
-    database.ref(`places/${venueID}`).on("value", function (childSnap) {
-      $(`#${venueID}numCheckedIn`).text(`${childSnap.child('users').numChildren()} have checked in`)
-    })
-  });
-
-  let checkIn = function (ID) {
-    database.ref(`users/${currentUserO.uid}`).once("value", function (snap) {
-      if (snap.val().currentLocation != null) {
-        database.ref(`places/${snap.val().currentLocation}/users/${currentUserO.uid}`).remove()
-        console.log(`Delete Successful`);
-        database.ref(`places/${snap.val().currentLocation}`).on("value", function (childSnap) {
-          $(`#${snap.val().currentLocation}numCheckedIn`).text(`${childSnap.child('users').numChildren()} have checked in`)
-        })
-        database.ref(`places/${ID}/users/${currentUserO.uid}`).set(currentUserO.username);
-        database.ref(`users/${currentUserO.uid}`).set({
-          email: currentUserO.email,
-          username: currentUserO.username,
-          currentLocation: currentUserO.currentLocation,
-        });
+        $("#card-container").append(`
+        <div class="card card-limited hoverable">
+        <div data="${childSnap.key}" id="cardImage" class="card-image modal-trigger" href="#modal">
+        <img src="http://wptest.io/demo/wp-content/uploads/sites/2/2012/12/unicorn-wallpaper.jpg">
+        <span id="place" class="card-title">${childSnap.val().name}</span>
+        </div>
+        <div class="card-content paragraph">
+        <div class="row">
+        <div class="col s9">
+        <p id="address">${childSnap.val().address}</p>
+        <p id="${childSnap.key}numCheckedIn">${childSnap.child('users').numChildren()} have checked in</p>
+        </div>
+        <div class="col s3">
+        <a data="${childSnap.key}" id="checkIn${childSnap.key}" class="btn-small waves-effect waves-light red right bottom hoverable checkIn"><i class="material-icons">&#10003</i></a>
+        <a data="${childSnap.key}" id="checkOut${childSnap.key}" class="btn-small waves-effect waves-light red right bottom hoverable checkOut hide"><i class="material-icons">OUT</i></a>
+        </div>
+        </div>
+        </div>
+        </div>`);
       }
+    });
+  }, 500);
 
-    })
+  $("#card-container").on("click", ".checkIn", function () {
+    if (auth.currentUser != null) {
 
-  }
-
-  $("#card-container").on("click", "#cardImage", function () {
-    $("#hereNow").empty();
-    let venueID = $(this).attr("data");
-    let name, address;
-    database.ref(`places/${venueID}`).once("value", function (snapShot) {
-      address = snapShot.val().address;
-      $("#placeAddress").text(address);
-
-      name = snapShot.val().name;
+      let venueID = $(this).attr("data");
+      currentUserO.currentLocation = venueID;
+      
+      checkIn(venueID);
+      
+      database.ref(`places/${venueID}`).on("value", function (childSnap) {
+        $(`#${venueID}numCheckedIn`).text(`${childSnap.child('users').numChildren()} have checked in`)
+      })
+    } else{
+      alert(`Please log in`)
+    }
+    });
+    
+    let checkIn = function (ID) {
+      database.ref(`users/${currentUserO.uid}`).once("value", function (snap) {
+        if (snap.val().currentLocation != null) {
+          database.ref(`places/${snap.val().currentLocation}/users/${currentUserO.uid}`).remove()
+          $(`#checkIn${snap.val().currentLocation}`).removeClass('hide');
+          $(`#checkOut${snap.val().currentLocation}`).addClass('hide');
+          console.log(`Delete Successful`);
+          database.ref(`places/${snap.val().currentLocation}`).on("value", function (childSnap) {
+            $(`#${snap.val().currentLocation}numCheckedIn`).text(`${childSnap.child('users').numChildren()} have checked in`)
+          })
+          database.ref(`places/${ID}/users/${currentUserO.uid}`).set(currentUserO.username);
+          database.ref(`users/${currentUserO.uid}`).set({
+            email: currentUserO.email,
+            username: currentUserO.username,
+            currentLocation: currentUserO.currentLocation,
+          });
+          $(`#checkIn${ID}`).addClass('hide');
+          $(`#checkOut${ID}`).removeClass('hide');
+        }
+        
+      })
+      
+    }
+    
+    $("#card-container").on("click", "#cardImage", function () {
+      $("#hereNow").empty();
+      let venueID = $(this).attr("data");
+      let name, address;
+      database.ref(`places/${venueID}`).once("value", function (snapShot) {
+        address = snapShot.val().address;
+        $("#placeAddress").text(address);
+        
+        name = snapShot.val().name;
       $("#placeName").text(name);
-
+      
       database.ref(`places/${venueID}/users`).once("value", function (childSnapshot) {
         childSnapshot.forEach(function (childSnap) {
           let newList = $("<li>");
           newList.text(childSnap.val());
           $("#hereNow").append(newList);
-
+          
         })
       })
     })
   })
-
-
+  
+  let checkout = function () {
+    database.ref(`users/${currentUserO.uid}`).once("value", function (snap) {
+      if (snap.val().currentLocation != null) {
+        database.ref(`places/${snap.val().currentLocation}/users/${currentUserO.uid}`).remove()
+        $(`#checkIn${snap.val().currentLocation}`).removeClass('hide');
+        $(`#checkOut${snap.val().currentLocation}`).addClass('hide');
+        console.log(`Delete Successful`);
+        database.ref(`places/${snap.val().currentLocation}`).on("value", function (childSnap) {
+          $(`#${snap.val().currentLocation}numCheckedIn`).text(`${childSnap.child('users').numChildren()} have checked in`)
+        })
+        database.ref(`users/${currentUserO.uid}`).set({
+          email: currentUserO.email,
+          username: currentUserO.username,
+          currentLocation: "none",
+        });
+      }
+      
+    });
+    currentUserO.currentLocation = "none";
+  }
+  
+  $("#card-container").on("click", ".checkOut", function () {
+    checkout();
+  });
 });
