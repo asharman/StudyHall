@@ -35,14 +35,12 @@ $(document).ready(function () {
   let database = firebase.database();
 
   const auth = firebase.auth();
-  let email, uid, currentusername;
-  let currentLocation;
-  // auth.signInWithEmailAndPassword(email, pass);
-  // auth.createUserWithEmailAndPassword(email, pass);
-  // auth.onAuthStateChanged(function() {});
-
-  // $("#email").val()
-  // $("#password").val()
+  let currentUserO = {
+    email: "",
+    uid: "",
+    username: "",
+    currentLocation: "none"
+  }
 
   $("#log-in").on("click", function () {
     auth.signInWithEmailAndPassword($("#email").val(), $("#password").val());
@@ -54,30 +52,7 @@ $(document).ready(function () {
     const useremail = $("#email").val();
     const userpassword = $("#password").val();
 
-    auth.createUserWithEmailAndPassword(useremail, userpassword).then(function (firebaseUser) {
-      let user = auth.currentUser;
-      email = user.email;
-      uid = user.uid;
-      let username = user.displayName;
-      currentLocation = "none"
-
-      if (username == null) {
-        
-        username = $("#username").val();
-        user.updateProfile({
-          displayName: username
-        }).then(function(object){
-          let userRef = database.ref(`users/` + uid);
-          
-          userRef.set({
-            email: email,
-            username: username,
-            currentLocation: currentLocation,
-          });
-        });
-      }
-      currentusername = username;
-    })
+    auth.createUserWithEmailAndPassword(useremail, userpassword)
   })
 
   $("#sign-out").on("click", function () {
@@ -92,25 +67,42 @@ $(document).ready(function () {
     let user = auth.currentUser;
     if (user != null) {
 
+      currentUserO.email = user.email;
+      currentUserO.uid = user.uid;
+      let username = user.displayName;
 
-      email = user.email;
-      uid = user.uid;
-      currentusername = user.displayName;
+      if (username == null) {
 
-      let userRef = database.ref(`users/` + uid);
+        username = $("#username").val();
+        user.updateProfile({
+          displayName: username
+        }).then(function () {
+          let userRef = database.ref(`users/` + currentUserO.uid);
 
-      userRef.once("value", function (snap) {
-
-        if (snap.val().currentLocation != null) {
-          currentLocation = snap.val().currentLocation;
           userRef.set({
-            email: email,
-            username: currentusername,
-            currentLocation: currentLocation,
+            email: currentUserO.email,
+            username: username,
+            currentLocation: currentUserO.currentLocation,
           });
-        }
-      });
+        });
+      }
 
+      currentUserO.username = username;
+      currentUserO.email = user.email;
+      currentUserO.uid = user.uid;
+
+      let userRef = database.ref(`users/` + currentUserO.uid);
+        userRef.once("value", function (snap) {
+
+          if (snap.val().currentLocation != null) {
+            currentUserO.currentLocation = snap.val().currentLocation;
+            userRef.set({
+              email: currentUserO.email,
+              username: currentUserO.username,
+              currentLocation: currentUserO.currentLocation,
+            });
+          }
+        });
       $("#sign-out").removeClass("hide");
       $("#log-in").addClass("hide");
       $("#sign-up").addClass("hide");
@@ -126,24 +118,24 @@ $(document).ready(function () {
   $("#searchButton").on("click", function () {
     $("#card-container").empty();
     let latitude, longitude;
-    navigator.geolocation.getCurrentPosition(function(position) {
+    navigator.geolocation.getCurrentPosition(function (position) {
       latitude = position.coords.latitude;
       longitude = position.coords.longitude;
-    
-    let queryURL = `https://api.foursquare.com/v2/venues/search?client_id=MRGWSL0B0JOCS24FEY2DXNMTQSPVX32A2QQ2WGLGXKPJ4OBM&client_secret=A5TGKNJQUCFJFLVHRC1R1BXIHN35GZYKLFPZVV5W11PTHA5T&v=20180323&ll=${latitude},${longitude}&query=coffee&limit=15`;
-    $.ajax({
-      url: queryURL,
-      datatype: "json",
-      method: "GET",
-    }).then(function (response) {
-      object = response;
-      for (i in response.response.venues) {
-        let name = response.response.venues[i].name;
-        let address = response.response.venues[i].location.formattedAddress;
 
-        if (address.length === 3) {
+      let queryURL = `https://api.foursquare.com/v2/venues/search?client_id=MRGWSL0B0JOCS24FEY2DXNMTQSPVX32A2QQ2WGLGXKPJ4OBM&client_secret=A5TGKNJQUCFJFLVHRC1R1BXIHN35GZYKLFPZVV5W11PTHA5T&v=20180323&ll=${latitude},${longitude}&query=coffee&limit=15`;
+      $.ajax({
+        url: queryURL,
+        datatype: "json",
+        method: "GET",
+      }).then(function (response) {
+        object = response;
+        for (i in response.response.venues) {
+          let name = response.response.venues[i].name;
+          let address = response.response.venues[i].location.formattedAddress;
 
-          $("#card-container").append(`
+          if (address.length === 3) {
+
+            $("#card-container").append(`
           <div class="card card-limited hoverable">
           <div data="${i}" class="card-image" href="#modal">
           <img src="http://wptest.io/demo/wp-content/uploads/sites/2/2012/12/unicorn-wallpaper.jpg">
@@ -160,10 +152,10 @@ $(document).ready(function () {
           </div>
           </div>
           </div>`)
+          }
         }
-      }
+      });
     });
-  });
   });
 
   $("#card-container").on("click", "#addButton", function () {
@@ -199,7 +191,7 @@ $(document).ready(function () {
 
   $("#card-container").on("click", "#checkIn", function () {
     let venueID = $(this).attr("data");
-    currentLocation = venueID;
+    currentUserO.currentLocation = venueID;
 
     checkIn(venueID);
 
@@ -209,19 +201,18 @@ $(document).ready(function () {
   });
 
   let checkIn = function (ID) {
-    database.ref(`users/${uid}`).once("value", function (snap) {
-
+    database.ref(`users/${currentUserO.uid}`).once("value", function (snap) {
       if (snap.val().currentLocation != null) {
-        database.ref(`places/${snap.val().currentLocation}/users/${uid}`).remove()
+        database.ref(`places/${snap.val().currentLocation}/users/${currentUserO.uid}`).remove()
         console.log(`Delete Successful`);
         database.ref(`places/${snap.val().currentLocation}`).on("value", function (childSnap) {
           $(`#${snap.val().currentLocation}numCheckedIn`).text(`${childSnap.child('users').numChildren()} have checked in`)
         })
-        database.ref(`places/${ID}/users/${uid}`).set(currentusername);
-        database.ref(`users/${uid}`).set({
-          email: email,
-          username: currentusername,
-          currentLocation: currentLocation,
+        database.ref(`places/${ID}/users/${currentUserO.uid}`).set(currentUserO.username);
+        database.ref(`users/${currentUserO.uid}`).set({
+          email: currentUserO.email,
+          username: currentUserO.username,
+          currentLocation: currentUserO.currentLocation,
         });
       }
 
@@ -229,19 +220,19 @@ $(document).ready(function () {
 
   }
 
-  $("#card-container").on("click", "#cardImage", function() {
+  $("#card-container").on("click", "#cardImage", function () {
     $("#hereNow").empty();
     let venueID = $(this).attr("data");
-    let name, address; 
-    database.ref(`places/${venueID}`).once("value", function(snapShot){
+    let name, address;
+    database.ref(`places/${venueID}`).once("value", function (snapShot) {
       address = snapShot.val().address;
       $("#placeAddress").text(address);
 
       name = snapShot.val().name;
       $("#placeName").text(name);
 
-      database.ref(`places/${venueID}/users`).once("value", function (childSnapshot){
-        childSnapshot.forEach(function(childSnap){
+      database.ref(`places/${venueID}/users`).once("value", function (childSnapshot) {
+        childSnapshot.forEach(function (childSnap) {
           let newList = $("<li>");
           newList.text(childSnap.val());
           $("#hereNow").append(newList);
@@ -251,5 +242,5 @@ $(document).ready(function () {
     })
   })
 
-  
+
 });
