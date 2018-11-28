@@ -35,7 +35,7 @@ $(document).ready(function () {
   let database = firebase.database();
 
   const auth = firebase.auth();
-  let email, uid, username;
+  let email, uid, currentusername;
   let currentLocation;
   // auth.signInWithEmailAndPassword(email, pass);
   // auth.createUserWithEmailAndPassword(email, pass);
@@ -54,27 +54,29 @@ $(document).ready(function () {
     const useremail = $("#email").val();
     const userpassword = $("#password").val();
 
-    auth.createUserWithEmailAndPassword(useremail, userpassword).then(function (user) {
-      email = user.user.email;
-      uid = user.user.uid;
-      username = user.user.displayName;
+    auth.createUserWithEmailAndPassword(useremail, userpassword).then(function (firebaseUser) {
+      let user = auth.currentUser;
+      email = user.email;
+      uid = user.uid;
+      let username = user.displayName;
       currentLocation = "none"
 
       if (username == null) {
-
+        
         username = $("#username").val();
-        user.user.updateProfile({
+        user.updateProfile({
           displayName: username
+        }).then(function(object){
+          let userRef = database.ref(`users/` + uid);
+          
+          userRef.set({
+            email: email,
+            username: username,
+            currentLocation: currentLocation,
+          });
         });
       }
-
-      let userRef = database.ref(`users/` + uid);
-      
-      userRef.set({
-        email: email,
-        username: username,
-        currentLocation: currentLocation,
-      });
+      currentusername = username;
     })
   })
 
@@ -93,7 +95,7 @@ $(document).ready(function () {
 
       email = user.email;
       uid = user.uid;
-      username = user.displayName;
+      currentusername = user.displayName;
 
       let userRef = database.ref(`users/` + uid);
 
@@ -103,7 +105,7 @@ $(document).ready(function () {
           currentLocation = snap.val().currentLocation;
           userRef.set({
             email: email,
-            username: username,
+            username: currentusername,
             currentLocation: currentLocation,
           });
         }
@@ -138,8 +140,6 @@ $(document).ready(function () {
       for (i in response.response.venues) {
         let name = response.response.venues[i].name;
         let address = response.response.venues[i].location.formattedAddress;
-        console.log(name);
-        console.log(address[0]);
 
         if (address.length === 3) {
 
@@ -169,7 +169,6 @@ $(document).ready(function () {
   $("#card-container").on("click", "#addButton", function () {
     let venueIndex = $(this).attr("data");
     let venue = object.response.venues[venueIndex];
-    console.log(venue);
 
     database.ref('places/').push({
       name: venue.name,
@@ -199,7 +198,6 @@ $(document).ready(function () {
   });
 
   $("#card-container").on("click", "#checkIn", function () {
-    console.log(currentLocation);
     let venueID = $(this).attr("data");
     currentLocation = venueID;
 
@@ -214,16 +212,15 @@ $(document).ready(function () {
     database.ref(`users/${uid}`).once("value", function (snap) {
 
       if (snap.val().currentLocation != null) {
-        console.log(snap.val().currentLocation);
         database.ref(`places/${snap.val().currentLocation}/users/${uid}`).remove()
         console.log(`Delete Successful`);
         database.ref(`places/${snap.val().currentLocation}`).on("value", function (childSnap) {
           $(`#${snap.val().currentLocation}numCheckedIn`).text(`${childSnap.child('users').numChildren()} have checked in`)
         })
-        database.ref(`places/${ID}/users/${uid}`).set(username);
+        database.ref(`places/${ID}/users/${uid}`).set(currentusername);
         database.ref(`users/${uid}`).set({
           email: email,
-          username: username,
+          username: currentusername,
           currentLocation: currentLocation,
         });
       }
