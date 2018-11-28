@@ -17,3 +17,7 @@
         background-color: lightblue;
     }
 }
+
+.sidenav-trigger {
+    position: relative;
+}
