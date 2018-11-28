@@ -26,40 +26,46 @@
 <body>
 
 
-        <ul id="slide-out" class="sidenav">
-                <form>
-    
-                        <div class="row">
-                          <div class="input-field col s12">
-                            <input id="email" type="email" class="validate">
-                            <label for="email">Email</label>
-                          </div>
-                        </div>
-                        <div class="row">
-                              <div class="input-field col s12">
-                                <input id="password" type="password" class="validate">
-                                <label for="password">Password</label>
-                              </div>
-                            </div>
-                            <div class="row">
-                                  <a id="log-in" class="waves-effect waves-light btn">Log-in</a>
-                                  <a id="sign-up" class="waves-effect waves-light btn">Sign-up</a>
-                                  <a id="sign-out" class="waves-effect waves-light btn hide">Sign-out</a>
-                            </div>
-                      </form>
-                      <a id="searchButton" class="waves-effect waves-light btn">Search</a>
-        </ul>
-        <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+    <ul id="slide-out" class="sidenav">
+        <form>
 
-    
-    
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="email" type="email" class="validate">
+                    <label for="email">Email</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="username" type="text" class="validate">
+                    <label for="username">Your Name</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="password" type="password" class="validate">
+                    <label for="password">Password</label>
+                </div>
+            </div>
+            <div class="row">
+                <a id="log-in" class="waves-effect waves-light btn">Log-in</a>
+                <a id="sign-up" class="waves-effect waves-light btn">Sign-up</a>
+                <a id="sign-out" class="waves-effect waves-light btn hide">Sign-out</a>
+            </div>
+        </form>
+        <a id="searchButton" class="waves-effect waves-light btn">Search</a>
+    </ul>
+    <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+
+
+
     <header>
         <nav class="nav-extended">
             <div class="nav-wrapper">
                 <div class="center-align">
                     <a href="#" class="brand-logo">Study Hall</a>
                 </div>
-                
+
             </div>
         </nav>
 
@@ -77,21 +83,24 @@
             <div class="row">
                 <div class="col s12">
                     <img width="100%" src="http://wptest.io/demo/wp-content/uploads/sites/2/2012/12/unicorn-wallpaper.jpg">
-                    <span>Place Name</span>
+                    <span id="placeName">Place Name</span>
                 </div>
             </div>
             <div class="row">
                 <div class="col s8">
-                    <p>Address:</p>
+                    <p>Address: <span id="placeAddress"></span></p>
                 </div>
                 <div class="col s4">
                     <p>Here Now:</p>
+                    <ul id="hereNow">
+
+                    </ul>
                 </div>
             </div>
             Insert edit button somewhere here with an empty div for text input
         </div>
     </div>
-    
+
 
 </body>
 
