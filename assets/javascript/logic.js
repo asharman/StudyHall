@@ -174,6 +174,7 @@ $(document).ready(function () {
         object = response;
         // for each response in response.response.venues
         for (i in response.response.venues) {
+          let randomImg = Math.floor(Math.random()*21);
           // set a variable to hold the individual place name
           let name = response.response.venues[i].name;
           // set a variable to hold the individual place address
@@ -181,29 +182,29 @@ $(document).ready(function () {
           // if the address array is equal to three, include the place, otherwise skip it.
           if (address.length === 3) {
             //append the place card to the card-container
-           $("#card-container").append(`
-          <div class="card card-limited hoverable">
-          <div data="${i}" class="card-image" href="#modal1">
-          <img src="http://wptest.io/demo/wp-content/uploads/sites/2/2012/12/unicorn-wallpaper.jpg">
-          <span id="place" class="card-title">${name}</span>
-          </div>
-          <div class="card-content paragraph">
-          <div class="row">
-          <div class="col s9">
-          <p id="address" class="col s9">${address[0]}</p>
-          </div>
-          <div class="col s3">
-          <a data="${i}" id="addButton" class="btn-small waves-effect waves-light red right bottom hoverable"><i class="material-icons">ADD</i></a>
-          </div>
-          </div>
-          </div>
-          </div>`)
+            $("#card-container").append(`
+            <div class="card card-limited hoverable">
+            <div data="${i}" class="card-image" href="#modal1">
+            <img src="assets/images/coffee${randomImg}.jpg">
+            <span id="place" class="card-title">${name}</span>
+            </div>
+            <div class="card-content paragraph">
+            <div class="row">
+            <div class="col s9">
+            <p id="address" class="col s9">${address[0]}</p>
+            </div>
+            <div class="col s3">
+            <a data="${i}" id="addButton" class="btn-small waves-effect waves-light red right bottom hoverable"><i class="material-icons">ADD</i></a>
+            </div>
+            </div>
+            </div>
+            </div>`)
           }
         }
       });
     });
   });
-
+  
   // When card-container button addButton is clicked
   $("#card-container").on("click", "#addButton", function () {
     // if there is a current user
@@ -220,19 +221,20 @@ $(document).ready(function () {
     }
     // Reload the page
     location.reload();
-    });
-    // Set a timeout to ensure that our other code runs before this
-    let buffer = setTimeout(function () {
+  });
+  // Set a timeout to ensure that our other code runs before this
+  let buffer = setTimeout(function () {
     // when a new place is added to the database take a snapshot  
     database.ref('places/').on("child_added", function (childSnap) {
       console.log(currentUserO.currentLocation);
       console.log(childSnap.key);
       // If the current location of the user is the same as the place, append the place card to the card-container div
+      let randomImg = Math.floor(Math.random()*21);
       if (currentUserO.currentLocation == childSnap.key) {
         $("#card-container").append(`
         <div class="card card-limited hoverable">
         <div data="${childSnap.key}" id="cardImage" class="card-image modal-trigger" href="#modal1">
-        <img src="http://wptest.io/demo/wp-content/uploads/sites/2/2012/12/unicorn-wallpaper.jpg">
+        <img src="assets/images/coffee${randomImg}.jpg">
         <span id="place" class="card-title">${childSnap.val().name}</span>
         </div>
         <div class="card-content paragraph">
@@ -248,13 +250,13 @@ $(document).ready(function () {
         </div>
         </div>
         </div>`);
-
+        
       } else {
         // Otherwise do the same thing?
         $("#card-container").append(`
         <div class="card card-limited hoverable">
         <div data="${childSnap.key}" id="cardImage" class="card-image modal-trigger" href="#modal1">
-        <img src="http://wptest.io/demo/wp-content/uploads/sites/2/2012/12/unicorn-wallpaper.jpg">
+        <img src="assets/images/coffee${randomImg}.jpg">
         <span id="place" class="card-title">${childSnap.val().name}</span>
         </div>
         <div class="card-content paragraph">
