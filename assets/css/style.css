@@ -21,3 +21,24 @@
 .sidenav-trigger {
     position: relative;
 }
+
+.sidenav {
+    background-color:#A8DBD6; 
+}
+
+.center-align {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 40px;
+    color: #324140; 
+}
+
+body {
+background-image: url(../Images/Create-An-Animated-Radial-Gradient-Background-With-jQuery-CSS3.jpg);
+font-family: 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
+	margin-top: 0px;
+	margin: 0px;
+	padding: 0px;
+	border-color: #dddddd;
+	background-repeat: no-repeat;
+	background-size: cover; 
+}
