@@ -27,6 +27,7 @@
 
     <header>
         <div>
+            <!-- A Sidenav to hold our sign-in/sign-up form and search button -->
             <ul id="slide-out" class="sidenav">
                 <form>
 
@@ -44,15 +45,17 @@
                     </div>
                     <div class="row">
                         <a id="log-in" class="waves-effect waves-light btn">Log-in</a>
+                        <!-- Triggers a modal to sign users up -->
                         <a id="sign-up-btn" href="#modal2" class="waves-effect modal-trigger waves-light btn">Sign-up</a>
                         <a id="sign-out" class="waves-effect waves-light btn hide">Sign-out</a>
                     </div>
                 </form>
                 <a id="searchButton" class="waves-effect waves-light btn">Search</a>
             </ul>
+            <!-- The button for the sidenav -->
             <a href="#" data-target="slide-out" class="sidenav-trigger left"><i class="material-icons">menu</i></a>
         </div>
-
+        <!-- Title of the site -->
         <div class="center-align">Study Hall</div>
 
 
@@ -63,13 +66,13 @@
     </header>
 
 
-
+    <!-- A container to hold our dynamically generated place-cards -->
     <div class="row">
         <div id="card-container" class="col s12 m6 l4">
         </div>
     </div>
 
-
+    <!-- The modal that pops up when a card image is clicked to provide more place information -->
     <div id="modal1" class="modal">
         <div class="modal-content">
             <div class="row">
@@ -83,6 +86,7 @@
                     <p>Address: <span id="placeAddress"></span></p>
                 </div>
                 <div class="col s4">
+                    <!-- The number of students currently checked in to a certain location -->
                     <p>Here Now:</p>
                     <ul id="hereNow">
 
@@ -92,6 +96,7 @@
         </div>
     </div>
 
+    <!-- The modal that triggers on the sign up button and allows users to sign up -->
     <div id="modal2" class="modal">
         <div class="modal-content">
         <form>
@@ -115,6 +120,7 @@
                 </div>
             </div>
             <div class="row">
+                <!-- Button to trigger the sign up functions -->
                 <a id="sign-up" class="waves-effect waves-light btn modal-close">Sign-up</a>
             </div>
         </form>
