@@ -28,47 +28,41 @@
     <header>
         <div>
             <ul id="slide-out" class="sidenav">
-                    <form>
-            
-                        <div class="row">
-                            <div class="input-field col s12">
-                                <input id="email" type="email" class="validate">
-                                <label for="email">Email</label>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="input-field col s12">
-                                <input id="username" type="text" class="validate">
-                                <label for="username">Your Name</label>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="input-field col s12">
-                                <input id="password" type="password" class="validate">
-                                <label for="password">Password</label>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <a id="log-in" class="waves-effect waves-light btn">Log-in</a>
-                            <a id="sign-up" class="waves-effect waves-light btn">Sign-up</a>
-                            <a id="sign-out" class="waves-effect waves-light btn hide">Sign-out</a>
-                        </div>
-                    </form>
-                    <a id="searchButton" class="waves-effect waves-light btn">Search</a>
-                </ul>
-                <a href="#" data-target="slide-out" class="sidenav-trigger left"><i class="material-icons">menu</i></a>
-                </div>
-        
-                    <div class="center-align">Study Hall</div>
-                
+                <form>
 
-            </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input id="email" type="email" class="validate">
+                            <label for="email">Email</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input id="password" type="password" class="validate">
+                            <label for="password">Password</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <a id="log-in" class="waves-effect waves-light btn">Log-in</a>
+                        <a id="sign-up-btn" href="#modal2" class="waves-effect modal-trigger waves-light btn">Sign-up</a>
+                        <a id="sign-out" class="waves-effect waves-light btn hide">Sign-out</a>
+                    </div>
+                </form>
+                <a id="searchButton" class="waves-effect waves-light btn">Search</a>
+            </ul>
+            <a href="#" data-target="slide-out" class="sidenav-trigger left"><i class="material-icons">menu</i></a>
+        </div>
+
+        <div class="center-align">Study Hall</div>
+
+
+        </div>
         </nav>
 
 
     </header>
 
-    
+
 
     <div class="row">
         <div id="card-container" class="col s12 m6 l4">
@@ -76,7 +70,7 @@
     </div>
 
 
-    <div id="modal" class="modal">
+    <div id="modal1" class="modal">
         <div class="modal-content">
             <div class="row">
                 <div class="col s12">
@@ -95,10 +89,37 @@
                     </ul>
                 </div>
             </div>
-            Insert edit button somewhere here with an empty div for text input
         </div>
     </div>
 
+    <div id="modal2" class="modal">
+        <div class="modal-content">
+        <form>
+
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="email2" type="email" class="validate">
+                    <label for="email">Email</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="username" type="text" class="validate">
+                    <label for="username">Your Name</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="password2" type="password" class="validate">
+                    <label for="password">Password</label>
+                </div>
+            </div>
+            <div class="row">
+                <a id="sign-up" class="waves-effect waves-light btn modal-close">Sign-up</a>
+            </div>
+        </form>
+    </div>  
+    </div>
 
 </body>
 

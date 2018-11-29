@@ -1,6 +1,6 @@
 $(document).ready(function () {
   $('.modal').modal();
-
+ 
   $('.sidenav').sidenav();
 
 
@@ -49,8 +49,9 @@ $(document).ready(function () {
   
   $("#sign-up").on("click", function () {
     
-    const useremail = $("#email").val();
-    const userpassword = $("#password").val();
+    const useremail = $("#email2").val();
+    const userpassword = $("#password2").val();
+    console.log(useremail);
     
     auth.createUserWithEmailAndPassword(useremail, userpassword)
   })
@@ -59,7 +60,7 @@ $(document).ready(function () {
     checkout();
     $("#sign-out").addClass("hide");
     $("#log-in").removeClass("hide");
-    $("#sign-up").removeClass("hide");
+    $("#sign-up-btn").removeClass("hide");
     auth.signOut();
     
   })
@@ -109,7 +110,7 @@ $(document).ready(function () {
       });
       $("#sign-out").removeClass("hide");
       $("#log-in").addClass("hide");
-      $("#sign-up").addClass("hide");
+      $("#sign-up-btn").addClass("hide");
     }
     else {
       console.log("not logged in");
@@ -141,7 +142,7 @@ $(document).ready(function () {
 
             $("#card-container").append(`
           <div class="card card-limited hoverable">
-          <div data="${i}" class="card-image" href="#modal">
+          <div data="${i}" class="card-image" href="#modal1">
           <img src="http://wptest.io/demo/wp-content/uploads/sites/2/2012/12/unicorn-wallpaper.jpg">
           <span id="place" class="card-title">${name}</span>
           </div>
@@ -184,7 +185,7 @@ $(document).ready(function () {
       if (currentUserO.currentLocation == childSnap.key) {
         $("#card-container").append(`
         <div class="card card-limited hoverable">
-        <div data="${childSnap.key}" id="cardImage" class="card-image modal-trigger" href="#modal">
+        <div data="${childSnap.key}" id="cardImage" class="card-image modal-trigger" href="#modal1">
         <img src="http://wptest.io/demo/wp-content/uploads/sites/2/2012/12/unicorn-wallpaper.jpg">
         <span id="place" class="card-title">${childSnap.val().name}</span>
         </div>
@@ -206,7 +207,7 @@ $(document).ready(function () {
 
         $("#card-container").append(`
         <div class="card card-limited hoverable">
-        <div data="${childSnap.key}" id="cardImage" class="card-image modal-trigger" href="#modal">
+        <div data="${childSnap.key}" id="cardImage" class="card-image modal-trigger" href="#modal1">
         <img src="http://wptest.io/demo/wp-content/uploads/sites/2/2012/12/unicorn-wallpaper.jpg">
         <span id="place" class="card-title">${childSnap.val().name}</span>
         </div>
