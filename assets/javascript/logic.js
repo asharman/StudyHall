@@ -151,6 +151,7 @@ $(document).ready(function () {
   
   // When the search button is clicked
   $("#searchButton").on("click", function () {
+    M.Sidenav.getInstance($(".sidenav")).close();
     // Empty #card-container
     $("#card-container").empty();
     // Set empty latitude and longitude variables
