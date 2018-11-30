@@ -16,24 +16,6 @@ $(document).ready(function () {
   };
   firebase.initializeApp(config);
   
-  // Do we need this???
-  let uiConfig = {
-    signInSuccessUrl: '<url-to-redirect-to-on-success>',
-    signInOptions: [
-      // Leave the lines as is for the providers you want to offer your users.
-      firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-    ],
-    // tosUrl and privacyPolicyUrl accept either url string or a callback
-    // function.
-    // Terms of service url/callback.
-    tosUrl: '<your-tos-url>',
-    // Privacy policy url/callback.
-    privacyPolicyUrl: function () {
-      window.location.assign('<your-privacy-policy-url>');
-    }
-  };
-
-
   // set global variable to refer to firebase.database
   let database = firebase.database();
   // set global variable to refer to firebase authorization functions
@@ -117,6 +99,8 @@ $(document).ready(function () {
       currentUserO.username = username;
       currentUserO.email = user.email;
       currentUserO.uid = user.uid;
+
+      $("#usernameDisplay").text(`   Hello, ${currentUserO.username}!`)
       
       // a variable to key into the current user object in firebase
       let userRef = database.ref(`users/` + currentUserO.uid);
@@ -153,7 +137,10 @@ $(document).ready(function () {
   $("#searchButton").on("click", function () {
     M.Sidenav.getInstance($(".sidenav")).close();
     // Empty #card-container
-    $("#card-container").empty();
+    $("#column0").empty();
+    $("#column1").empty();
+    $("#column2").empty();
+    $("#cardHeader").text("Nearby Coffee Shops");
     // Set empty latitude and longitude variables
     let latitude, longitude;
     // use getCurrentPosition to find current latitude and longitude of the user
@@ -173,8 +160,9 @@ $(document).ready(function () {
         // set a variable for our ajax response
         object = response;
         // for each response in response.response.venues
+        let currentColumn = 0;
         for (i in response.response.venues) {
-          let randomImg = Math.floor(Math.random()*21);
+          let randomImg = (Math.floor(Math.random()*19)+ 1);
           // set a variable to hold the individual place name
           let name = response.response.venues[i].name;
           // set a variable to hold the individual place address
@@ -182,7 +170,7 @@ $(document).ready(function () {
           // if the address array is equal to three, include the place, otherwise skip it.
           if (address.length === 3) {
             //append the place card to the card-container
-            $("#card-container").append(`
+            $(`#column${currentColumn}`).append(`
             <div class="card card-limited hoverable">
             <div data="${i}" class="card-image" href="#modal1">
             <img src="assets/images/coffee${randomImg}.jpg">
@@ -194,11 +182,16 @@ $(document).ready(function () {
             <p id="address" class="col s9">${address[0]}</p>
             </div>
             <div class="col s3">
-            <a data="${i}" id="addButton" class="btn-small waves-effect waves-light red right bottom hoverable"><i class="material-icons">ADD</i></a>
+            <a data="${i}" id="addButton" class="btn-small waves-effect waves-light blue right bottom hoverable"><i class="material-icons">ADD</i></a>
             </div>
             </div>
             </div>
             </div>`)
+            currentColumn++;
+            
+            if (currentColumn == 3) {
+              currentColumn = 0;
+            }
           }
         }
       });
@@ -225,13 +218,14 @@ $(document).ready(function () {
   // Set a timeout to ensure that our other code runs before this
   let buffer = setTimeout(function () {
     // when a new place is added to the database take a snapshot  
+    let currentColumn = 0;
     database.ref('places/').on("child_added", function (childSnap) {
       console.log(currentUserO.currentLocation);
       console.log(childSnap.key);
       // If the current location of the user is the same as the place, append the place card to the card-container div
-      let randomImg = Math.floor(Math.random()*21);
+      let randomImg = (Math.floor(Math.random()*19)+1);
       if (currentUserO.currentLocation == childSnap.key) {
-        $("#card-container").append(`
+        $(`#column${currentColumn}`).append(`
         <div class="card card-limited hoverable">
         <div data="${childSnap.key}" id="cardImage" class="card-image modal-trigger" href="#modal1">
         <img src="assets/images/coffee${randomImg}.jpg">
@@ -244,8 +238,8 @@ $(document).ready(function () {
         <p id="${childSnap.key}numCheckedIn">${childSnap.child('users').numChildren()} have checked in</p>
         </div>
         <div class="col s3">
-        <a data="${childSnap.key}" id="checkIn${childSnap.key}" class="btn-small waves-effect waves-light red right bottom hoverable checkIn hide"><i class="material-icons">&#10003</i></a>
-        <a data="${childSnap.key}" id="checkOut${childSnap.key}" class="btn-small waves-effect waves-light red right bottom hoverable checkOut"><i class="material-icons">OUT</i></a>
+        <a data="${childSnap.key}" id="checkIn${childSnap.key}" class="btn-small waves-effect waves-light blue right bottom hoverable checkIn hide"><i class="material-icons">&#10003</i></a>
+        <a data="${childSnap.key}" id="checkOut${childSnap.key}" class="btn-small waves-effect waves-light blue right bottom hoverable checkOut"><i class="material-icons">OUT</i></a>
         </div>
         </div>
         </div>
@@ -253,7 +247,7 @@ $(document).ready(function () {
         
       } else {
         // Otherwise do the same thing?
-        $("#card-container").append(`
+        $(`#column${currentColumn}`).append(`
         <div class="card card-limited hoverable">
         <div data="${childSnap.key}" id="cardImage" class="card-image modal-trigger" href="#modal1">
         <img src="assets/images/coffee${randomImg}.jpg">
@@ -266,12 +260,17 @@ $(document).ready(function () {
         <p id="${childSnap.key}numCheckedIn">${childSnap.child('users').numChildren()} have checked in</p>
         </div>
         <div class="col s3">
-        <a data="${childSnap.key}" id="checkIn${childSnap.key}" class="btn-small waves-effect waves-light red right bottom hoverable checkIn"><i class="material-icons">&#10003</i></a>
-        <a data="${childSnap.key}" id="checkOut${childSnap.key}" class="btn-small waves-effect waves-light red right bottom hoverable checkOut hide"><i class="material-icons">OUT</i></a>
+        <a data="${childSnap.key}" id="checkIn${childSnap.key}" class="btn-small waves-effect waves-light blue right bottom hoverable checkIn"><i class="material-icons">&#10003</i></a>
+        <a data="${childSnap.key}" id="checkOut${childSnap.key}" class="btn-small waves-effect waves-light blue right bottom hoverable checkOut hide"><i class="material-icons">OUT</i></a>
         </div>
         </div>
         </div>
         </div>`);
+      }
+      currentColumn ++;
+
+      if (currentColumn == 3) {
+        currentColumn = 0;
       }
     });
   }, 500);

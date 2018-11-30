@@ -6,7 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>StudyHall</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
+        crossorigin="anonymous">
     <!-- Materialize CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <!-- Local CSS -->
@@ -54,10 +55,11 @@
                 <a id="searchButton" class="waves-effect waves-light btn">Search</a>
             </ul>
             <!-- The button for the sidenav -->
-            <a href="#" data-target="slide-out" class="sidenav-trigger menu left"><i class="material-icons menuBtn">menu</i></a>
+            <a href="#" data-target="slide-out" class="sidenav-trigger menu left"><i class="material-icons menuBtn"><i
+                        class="fas fa-user"></i></i><span id="usernameDisplay">  Please Log In</span></a>
         </div>
         <!-- Title of the site -->
-        <div class="center-align">Study Hall</div>
+        <div id="studyHall" class="center-align">Study Hall</div>
 
 
 
@@ -70,7 +72,19 @@
 
     <!-- A container to hold our dynamically generated place-cards -->
     <div class="row">
-        <div id="card-container" class="col s12 m6 l4">
+        <div id="card-container">
+            <div class="center-align">
+                <h5 id="cardHeader" class="center-align">Saved Locations</h5>
+            </div>
+            <div id="column0" class="col s12 m6 l4">
+
+            </div>
+            <div id="column1" class="col s12 m6 l4">
+
+            </div>
+            <div id="column2" class="col s12 m6 l4">
+
+            </div>
         </div>
     </div>
 
@@ -79,7 +93,7 @@
         <div class="modal-content">
             <div class="row">
                 <div class="col s12">
-                    <!-- <img width="100%" src="http://wptest.io/demo/wp-content/uploads/sites/2/2012/12/unicorn-wallpaper.jpg"> -->
+                    <img width="100%" src="http://wptest.io/demo/wp-content/uploads/sites/2/2012/12/unicorn-wallpaper.jpg">
                     <span id="placeName">Place Name</span>
                 </div>
             </div>
@@ -101,32 +115,32 @@
     <!-- The modal that triggers on the sign up button and allows users to sign up -->
     <div id="modal2" class="modal">
         <div class="modal-content">
-        <form>
+            <form>
 
-            <div class="row">
-                <div class="input-field col s12">
-                    <input id="email2" type="email" class="validate">
-                    <label for="email">Email</label>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="email2" type="email" class="validate">
+                        <label for="email">Email</label>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s12">
-                    <input id="username" type="text" class="validate">
-                    <label for="username">Your Name</label>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="username" type="text" class="validate">
+                        <label for="username">Your Name</label>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s12">
-                    <input id="password2" type="password" class="validate">
-                    <label for="password">Password</label>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="password2" type="password" class="validate">
+                        <label for="password">Password</label>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <!-- Button to trigger the sign up functions -->
-                <a id="sign-up" class="waves-effect waves-light btn modal-close">Sign-up</a>
-            </div>
-        </form>
-    </div>  
+                <div class="row">
+                    <!-- Button to trigger the sign up functions -->
+                    <a id="sign-up" class="waves-effect waves-light btn modal-close">Sign-up</a>
+                </div>
+            </form>
+        </div>
     </div>
 
 </body>
