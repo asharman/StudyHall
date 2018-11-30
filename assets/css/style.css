@@ -53,11 +53,6 @@ body {
 	background-size: cover; 
 }
 
-#modal1 {
-    max-height: 100%;
-    overflow: visible;
-}
-
 .menuBtn {
     color: #1c1d22;
     background-color: #007EA7;

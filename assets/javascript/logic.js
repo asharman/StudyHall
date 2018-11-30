@@ -1,7 +1,7 @@
 $(document).ready(function () {
   // Initialize modal
   $('.modal').modal();
- // Initialize sideNav
+  // Initialize sideNav
   $('.sidenav').sidenav();
 
 
@@ -15,7 +15,7 @@ $(document).ready(function () {
     messagingSenderId: "448862351238"
   };
   firebase.initializeApp(config);
-  
+
   // set global variable to refer to firebase.database
   let database = firebase.database();
   // set global variable to refer to firebase authorization functions
@@ -37,7 +37,7 @@ $(document).ready(function () {
     $("#password").val("");
 
   })
-  
+
   // When sign-up is clicked (This is the sign-up button in the modal)
   $("#sign-up").on("click", function () {
     M.Sidenav.getInstance($(".sidenav")).close();
@@ -48,7 +48,7 @@ $(document).ready(function () {
     // take the #email2 and #password2 values and create a new user in firebase authorized users
     auth.createUserWithEmailAndPassword(useremail, userpassword)
   })
-  
+
   // When sign out is clicked
   $("#sign-out").on("click", function () {
     M.Sidenav.getInstance($(".sidenav")).close();
@@ -60,9 +60,9 @@ $(document).ready(function () {
     $("#sign-up-btn").removeClass("hide");
     // sign the user out with firebase
     auth.signOut();
-    
+
   })
-  
+
   // when the users status changes (sign in, sign out)
   auth.onAuthStateChanged(function (firebaseUser) {
     // a variable for auth.currentUser
@@ -74,7 +74,7 @@ $(document).ready(function () {
       currentUserO.email = user.email;
       currentUserO.uid = user.uid;
       let username = user.displayName;
-      
+
       // if the username doesn't exist
       if (username == null) {
         // pull the username from the value of the form 
@@ -94,14 +94,14 @@ $(document).ready(function () {
           });
         });
       }
-      
+
       // set variable for the current users information (name, email and ID)
       currentUserO.username = username;
       currentUserO.email = user.email;
       currentUserO.uid = user.uid;
 
       $("#usernameDisplay").text(`   Hello, ${currentUserO.username}!`)
-      
+
       // a variable to key into the current user object in firebase
       let userRef = database.ref(`users/` + currentUserO.uid);
       // function to look once through the current users object in firebase
@@ -127,12 +127,12 @@ $(document).ready(function () {
     //or else log "not logged in"
     else {
       console.log("not logged in");
-      
+
     }
   })
-  
+
   console.log(`Working`);
-  
+
   // When the search button is clicked
   $("#searchButton").on("click", function () {
     M.Sidenav.getInstance($(".sidenav")).close();
@@ -162,7 +162,7 @@ $(document).ready(function () {
         // for each response in response.response.venues
         let currentColumn = 0;
         for (i in response.response.venues) {
-          let randomImg = (Math.floor(Math.random()*19)+ 1);
+          let randomImg = (Math.floor(Math.random() * 19) + 1);
           // set a variable to hold the individual place name
           let name = response.response.venues[i].name;
           // set a variable to hold the individual place address
@@ -188,7 +188,7 @@ $(document).ready(function () {
             </div>
             </div>`)
             currentColumn++;
-            
+
             if (currentColumn == 3) {
               currentColumn = 0;
             }
@@ -197,11 +197,11 @@ $(document).ready(function () {
       });
     });
   });
-  
+
   // When card-container button addButton is clicked
   $("#card-container").on("click", "#addButton", function () {
     // if there is a current user
-    if (auth.currentUser != null){
+    if (auth.currentUser != null) {
       // Save the data attribute of the addButton (current place ID)
       let venueIndex = $(this).attr("data");
       // set a variable to help push the new place to firebase database
@@ -218,14 +218,18 @@ $(document).ready(function () {
   // Set a timeout to ensure that our other code runs before this
   let buffer = setTimeout(function () {
     // when a new place is added to the database take a snapshot  
-    let currentColumn = 0;
-    database.ref('places/').on("child_added", function (childSnap) {
-      console.log(currentUserO.currentLocation);
-      console.log(childSnap.key);
-      // If the current location of the user is the same as the place, append the place card to the card-container div
-      let randomImg = (Math.floor(Math.random()*19)+1);
-      if (currentUserO.currentLocation == childSnap.key) {
-        $(`#column${currentColumn}`).append(`
+    database.ref('places/').on("value", function (Snap) {
+      let currentColumn = 0;
+      $("#column0").empty();
+      $("#column1").empty();
+      $("#column2").empty();
+      Snap.forEach(function (childSnap) {
+        console.log(currentUserO.currentLocation);
+        console.log(childSnap.key);
+        // If the current location of the user is the same as the place, append the place card to the card-container div
+        let randomImg = (Math.floor(Math.random() * 19) + 1);
+        if (currentUserO.currentLocation == childSnap.key) {
+          $(`#column${currentColumn}`).append(`
         <div class="card card-limited hoverable">
         <div data="${childSnap.key}" id="cardImage" class="card-image modal-trigger" href="#modal1">
         <img src="assets/images/coffee${randomImg}.jpg">
@@ -244,10 +248,10 @@ $(document).ready(function () {
         </div>
         </div>
         </div>`);
-        
-      } else {
-        // Otherwise do the same thing?
-        $(`#column${currentColumn}`).append(`
+
+        } else {
+          // Otherwise do the same thing?
+          $(`#column${currentColumn}`).append(`
         <div class="card card-limited hoverable">
         <div data="${childSnap.key}" id="cardImage" class="card-image modal-trigger" href="#modal1">
         <img src="assets/images/coffee${randomImg}.jpg">
@@ -266,12 +270,13 @@ $(document).ready(function () {
         </div>
         </div>
         </div>`);
-      }
-      currentColumn ++;
+        }
+        currentColumn++;
 
-      if (currentColumn == 3) {
-        currentColumn = 0;
-      }
+        if (currentColumn == 3) {
+          currentColumn = 0;
+        }
+      });
     });
   }, 500);
 
@@ -290,55 +295,55 @@ $(document).ready(function () {
         // Update the html to show how many people are currently checked in at that location
         $(`#${venueID}numCheckedIn`).text(`${childSnap.child('users').numChildren()} have checked in`)
       })
-    } else{
+    } else {
       // Otherwise tell the user to log in
       alert(`Please log in`)
     }
-    });
-    // Create the checkIn function
-    let checkIn = function (ID) {
-      // Look into the current user's information on firebase
-      database.ref(`users/${currentUserO.uid}`).once("value", function (snap) {
-        // if the current user has a current location
-        if (snap.val().currentLocation != null) {
-          
-          database.ref(`places/${snap.val().currentLocation}/users/${currentUserO.uid}`).remove()
-          $(`#checkIn${snap.val().currentLocation}`).removeClass('hide');
-          $(`#checkOut${snap.val().currentLocation}`).addClass('hide');
-          console.log(`Delete Successful`);
-          database.ref(`places/${snap.val().currentLocation}`).on("value", function (childSnap) {
-            $(`#${snap.val().currentLocation}numCheckedIn`).text(`${childSnap.child('users').numChildren()} have checked in`)
-          })
-          database.ref(`places/${ID}/users/${currentUserO.uid}`).set(currentUserO.username);
-          database.ref(`users/${currentUserO.uid}`).set({
-            email: currentUserO.email,
-            username: currentUserO.username,
-            currentLocation: currentUserO.currentLocation,
-          });
-          $(`#checkIn${ID}`).addClass('hide');
-          $(`#checkOut${ID}`).removeClass('hide');
-        }
-        
-      })
-      
-    }
-    // When #cardImage inside of #card-container is clicked
-    $("#card-container").on("click", "#cardImage", function () {
-      // empty #hereNow 
-      $("#hereNow").empty();
-      // create a variable that grabs the data attribute of #cardImage
-      let venueID = $(this).attr("data");
-      // create blank name and address variables
-      let name, address;
-      // look through the current place on firebase
-      database.ref(`places/${venueID}`).once("value", function (snapShot) {
-        // give the address variable the value of the current address
-        address = snapShot.val().address;
-        // Update the address text into the html #placeAddress
-        $("#placeAddress").text(address);
-        // give the name variable the value of the current place name
-        name = snapShot.val().name;
-        // update the place name text in html #placeName
+  });
+  // Create the checkIn function
+  let checkIn = function (ID) {
+    // Look into the current user's information on firebase
+    database.ref(`users/${currentUserO.uid}`).once("value", function (snap) {
+      // if the current user has a current location
+      if (snap.val().currentLocation != null) {
+
+        database.ref(`places/${snap.val().currentLocation}/users/${currentUserO.uid}`).remove()
+        $(`#checkIn${snap.val().currentLocation}`).removeClass('hide');
+        $(`#checkOut${snap.val().currentLocation}`).addClass('hide');
+        console.log(`Delete Successful`);
+        database.ref(`places/${snap.val().currentLocation}`).on("value", function (childSnap) {
+          $(`#${snap.val().currentLocation}numCheckedIn`).text(`${childSnap.child('users').numChildren()} have checked in`)
+        })
+        database.ref(`places/${ID}/users/${currentUserO.uid}`).set(currentUserO.username);
+        database.ref(`users/${currentUserO.uid}`).set({
+          email: currentUserO.email,
+          username: currentUserO.username,
+          currentLocation: currentUserO.currentLocation,
+        });
+        $(`#checkIn${ID}`).addClass('hide');
+        $(`#checkOut${ID}`).removeClass('hide');
+      }
+
+    })
+
+  }
+  // When #cardImage inside of #card-container is clicked
+  $("#card-container").on("click", "#cardImage", function () {
+    // empty #hereNow 
+    $("#hereNow").empty();
+    // create a variable that grabs the data attribute of #cardImage
+    let venueID = $(this).attr("data");
+    // create blank name and address variables
+    let name, address;
+    // look through the current place on firebase
+    database.ref(`places/${venueID}`).once("value", function (snapShot) {
+      // give the address variable the value of the current address
+      address = snapShot.val().address;
+      // Update the address text into the html #placeAddress
+      $("#placeAddress").text(address);
+      // give the name variable the value of the current place name
+      name = snapShot.val().name;
+      // update the place name text in html #placeName
       $("#placeName").text(name);
       // look through the users object on firebase
       database.ref(`places/${venueID}/users`).once("value", function (childSnapshot) {
@@ -350,7 +355,7 @@ $(document).ready(function () {
           newList.text(childSnap.val());
           // append the newList and text to #hereNow in html
           $("#hereNow").append(newList);
-          
+
         })
       })
     })
@@ -380,11 +385,11 @@ $(document).ready(function () {
           currentLocation: "none",
         });
       }
-      
+
     });
     currentUserO.currentLocation = "none";
   }
-  
+
   // when .checkOut is clicked inside of #card-container 
   $("#card-container").on("click", ".checkOut", function () {
     // run the checkout function
